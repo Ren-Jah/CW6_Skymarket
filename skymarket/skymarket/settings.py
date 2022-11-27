@@ -34,7 +34,6 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
-# TODO здесь тоже нужно подключить Swagger и corsheaders
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -43,11 +42,17 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework_simplejwt",
+    "django_filters",
+    "djoser",
+    "corsheaders",
     "users",
     "ads",
     "redoc",
+    "drf_spectacular",
 ]
 
+AUTH_USER_MODEL = "users.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -80,11 +85,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "skymarket.wsgi.application"
 
-# TODO здесь мы настраиваем аутентификацию и пагинацию
+# здесь мы настраиваем аутентификацию и пагинацию
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
 }
+
+# SPECTACULAR
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Skymarket API',
+    'DESCRIPTION': 'Skymarket project',
+    'VERSION': '1.0.0',
+}
+
 # TODO здесь мы настраиваем Djoser
 DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.UserRegistrationSerializer'
+    },
+    'LOGIN_FIELD': 'email'
 }
 
 # Database
@@ -92,6 +115,14 @@ DJOSER = {
 
 # TODO здесь необходимо настроить подключение к БД
 DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'skymarket',
+        'USER': 'skymarket',
+        'PASSWORD': 'skymarket',
+        'HOST': 'localhost',
+        'PORT': '5433'
+    }
 }
 
 
